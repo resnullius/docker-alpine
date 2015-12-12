@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+declare BUILD_IMAGE="${BUILD_IMAGE:-alpine-builder}"
+declare BUILD_PREFIX="${BUILD_PREFIX:-alpine-build-}"
+declare OPTIONS="${OPTIONS:-versions/**/options}"
+
+build() {
+	declare build_files="${*:-$OPTIONS}"
+	: "${build_files:?}"
+
+	docker build -t "$BUILD_IMAGE" builder
+
+	for file in $build_files; do
+		( source "$file"
+		local release="$RELEASE"
+		local build="${BUILD_PREFIX}${release}"
+		local build_options="$BUILD_OPTIONS"
+		local version_dir="$(dirname "$file")"
+		local tags="$TAGS"
+
+		: "${build:?}" "${tags:?}" "${build_options:?}" "${release:?}"
+
+		docker rm "$build" 2>/dev/null || true
+
+		docker run --name "${build}" "$BUILD_IMAGE" $build_options \
+			> "./$version_dir/rootfs.tar.gz"
+
+		for tag in $tags; do
+			docker build -t "$tag" "$version_dir"
+			if [[ "$CIRCLE_BUILD_NUM" ]]; then
+				mkdir -p images \
+				&& docker tag -f "$tag" "${tag}-${CIRCLE_BUILD_NUM}" \
+				&& docker save "${tag}-${CIRCLE_BUILD_NUM}" \
+					| gzip -c > "images/${tag//\//_}-${CIRCLE_BUILD_NUM}.tar.gz" \
+				&& docker rmi "${tag}-${CIRCLE_BUILD_NUM}" || true
+			fi
+		done
+		docker rm "$build" 2>/dev/null || true )
+	done
+}
+
+commit() {
+	declare rootfs_files="${*:-versions/**/rootfs.tar.gz}"
+	local build_num="${CIRCLE_BUILD_NUM:-nobuild}"
+	local current_branch
+	current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+	for file in $rootfs_files; do
+		local release version_dir
+		release="$(basename "$(dirname "$file")")"
+		version_dir="$(dirname "$file")"
+
+		: "${release:?}" "${current_branch:?}"
+
+		git checkout -B "rootfs-$release"
+		git add -f -- "$file"
+		git commit -m "pushing release $release for build $build_num"
+		git push -f origin "rootfs-$release"
+		git checkout "$current_branch"
+	done
+}
+
+run_tests() {
+	declare build_files="${*:-$OPTIONS}"
+	declare -a test_files
+	for file in $build_files; do
+		source "$file"
+		local tag
+		tag="$(echo "$TAGS" | cut -d' ' -f1)"
+		tag="${tag//:/-}"
+		tag="${tag//\//_}"
+		test_files+=("test/test_${tag}.bats")
+	done
+	bats "${test_files[@]}"
+}
+
+push() {
+	declare build_files="${*:-$OPTIONS}"
+	for file in $build_files; do
+		( source "$file"
+		for tag in $TAGS; do
+			if docker history $tag &> /dev/null; then
+				[[ $PUSH_IMAGE ]] && docker push $tag
+			fi
+		done
+		exit 0 )
+	done
+}
+
+main() {
+	set -eo pipefail; [[ "$TRACE" ]] && set -x
+	declare cmd="$1"
+	case "$cmd" in
+		test)	shift;	run_tests "$@";;
+		commit)	shift;	commit "$@";;
+		push)	shift;	push "$@";;
+		library) shift; library;;
+		*)		build "$@";;
+	esac
+}
+
+main "$@"
