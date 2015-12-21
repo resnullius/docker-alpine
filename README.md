@@ -19,9 +19,19 @@ This is a fork from the [`gliderlabs/docker-alpine`](https://github.com/gliderla
 
 The resulting images are from [Alpine Linux][alpine], a minimalist Linux distribution that uses `musl` instead of `glibc`. The final size of the non-development images is between 4MB and 5MB.
 
+## Building stuff
+
+    orchestrator build
+
+The build will take **all** the files inside the `versions/$ARCH/` directory and build them; if only one file from there should be built the command used should look like this:
+
+    orchestrator build versions/armv7l/resnullius-3.2/options
+
+That will build `v3.2`. Please, make sure to run options from the architecture you are running. If using the `orchestrator build` command, it will auto-detect what's your architecture.
+
 ## Code organization
 
-Since it supports the build of two architectures (`armv7l` and `x86_64`), everything is built on two, you can see `builder-armv7l` and `builder-x86_64`. If anything on `builder-$ARCH/scripts` needs to be updated, that should be done on `builder-base` and run `./update-builder.bash run`.
+Since it supports the build of two architectures (`armv7l` and `x86_64`), everything is built on two, you can see `builder/armv7l` and `builder/x86_64`. If anything on `builder/$ARCH/scripts` needs to be updated, that should be done on `builder/base` and run `./update-builder.bash run`.
 
 ## License
 
