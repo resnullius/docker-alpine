@@ -42,8 +42,11 @@ declare BUILD_PREFIX="${BUILD_PREFIX:-alpine-build-$ARCH-}"
 declare OPTIONS="${OPTIONS:-versions-$ARCH/**/options}"
 
 build() {
+  echo "Building for architecture: $ARCH"
 	declare build_files="${*:-$OPTIONS}"
 	: "${build_files:?}"
+  
+  echo "Will build versions files: $build_files"
 
 	docker build -t "$BUILD_IMAGE" "$BUILDER_DIR"
 
