@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
 declare help="
-Update script for Alpine's docker builder.
+Update script for Alpine's docker versions.
 
 Usage:
-  update-builder.bash run
-  update-builder.bash --version
-  update-builder.bash -h | --help
+  update-versions.bash run
+  update-versions.bash --version
+  update-versions.bash -h | --help
+
+Options:
+  -h --help           Show this screen.
+  --version           Show versions.
 "
 
 declare version="
@@ -14,13 +18,16 @@ Version: 1.0.0.
 Licensed under the BSD terms.
 "
 
-declare BUILDER_BASE="${BUILDER_BASE:-builder/base}"
-declare BUILDER_CHILDS="${BUILDER_CHILDS:-builder/armv7l builder/x86_64}"
+declare ARCH="$(uname -m)"
+declare VERSIONS_BASE="${VERSIONS_BASE:-versions-base}"
+declare VERSIONS_CHILDS="${VERSIONS_CHILDS:-versions-armv7l versions-x86_64}"
 
 run_updater() {
-  for builder in $BUILDER_CHILDS; do
+  for ver in $VERSIONS_CHILDS; do
     echo "Copying scripts from $BUILDER_BASE to $builder"
-    cp -r $BUILDER_BASE/scripts $builder/
+    cp -r $VERSIONS_BASE/* $ver
+    create_tag "$ver"
+    [[ "$ARCH" -eq "x86_64" ]]
   done
 }
 
