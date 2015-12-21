@@ -1,14 +1,51 @@
 #!/usr/bin/env bash
+# vim: ft=sh
 
-declare BUILD_IMAGE="${BUILD_IMAGE:-alpine-builder}"
-declare BUILD_PREFIX="${BUILD_PREFIX:-alpine-build-}"
-declare OPTIONS="${OPTIONS:-versions/**/options}"
+declare help="
+Build Script for Alpine's docker images.
+
+Usage:
+  build test
+  build commit
+  build push
+  build [path/to/options] [path/to/other/options]
+  build --version
+  build -h | --help
+
+Options:
+  -h --help               Show this screen.
+  --version               Show versions.
+
+Example of build:
+  build versions/myprefix-*/options
+
+Examples of tests:
+  build version/myprefix-*/options
+
+How should the tests be named:
+Use the tag of the resulting docker image, so if the tag is foo/bar:1.0 the
+test file should be called test_foo_bar-1.0.bats inside the test directory.
+
+By default it will build all the available files on the `versions-$(uname -m)`
+directory.
+"
+
+declare version="
+Version: 0.1.0.
+Licensed under the BSD terms.
+"
+
+declare ARCH="$(uname -m)"
+declare BUILDER_DIR="${BUILDER_DIR:-builder-$ARCH}"
+declare BUILD_IMAGE="${BUILD_IMAGE:-alpine-builder-$ARCH}"
+declare BUILD_PREFIX="${BUILD_PREFIX:-alpine-build-$ARCH-}"
+declare OPTIONS="${OPTIONS:-versions-$ARCH/**/options}"
 
 build() {
 	declare build_files="${*:-$OPTIONS}"
 	: "${build_files:?}"
 
-	docker build -t "$BUILD_IMAGE" builder
+	docker build -t "$BUILD_IMAGE" "$BUILDER_DIR"
 
 	for file in $build_files; do
 		( source "$file"
@@ -87,15 +124,24 @@ push() {
 	done
 }
 
+version() {
+  echo "$version"
+}
+
+help() {
+  echo "$help"
+}
+
 main() {
 	set -eo pipefail; [[ "$TRACE" ]] && set -x
 	declare cmd="$1"
 	case "$cmd" in
-		test)	shift;	run_tests "$@";;
-		commit)	shift;	commit "$@";;
-		push)	shift;	push "$@";;
-		library) shift; library;;
-		*)		build "$@";;
+		test)	        shift; run_tests "$@";;
+		commit)	      shift; commit "$@";;
+		push)	        shift; push "$@";;
+		-h|--help)    shift; help "$@";;
+    --version)    shift; version;;
+    *)            build "$@";;
 	esac
 }
 
