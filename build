@@ -26,7 +26,7 @@ How should the tests be named:
 Use the tag of the resulting docker image, so if the tag is foo/bar:1.0 the
 test file should be called test_foo_bar-1.0.bats inside the test directory.
 
-By default it will build all the available files on the `versions-$(uname -m)`
+By default it will build all the available files on the versions-arch
 directory.
 "
 
