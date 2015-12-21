@@ -19,6 +19,12 @@ This is a fork from the [`gliderlabs/docker-alpine`](https://github.com/gliderla
 
 The resulting images are from [Alpine Linux][alpine], a minimalist Linux distribution that uses `musl` instead of `glibc`. The final size of the non-development images is between 4MB and 5MB.
 
+The tags available for both, `resnullius/alpine` and `resnullius/alpine-armv7l` are:
+
++ `:edge`: Alpine's [edge release](http://wiki.alpinelinux.org/wiki/Edge).
++ `:3.3` and `:latest`: Alpine's [v3.3 release](http://www.alpinelinux.org/posts/Alpine-3.3.0-released.html).
++ `:3.2`: Alpine's [v3.2 release](http://www.alpinelinux.org/posts/Alpine-3.2.3-released.html).
+
 ## Building stuff
 
     orchestrator build
