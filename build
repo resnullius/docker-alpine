@@ -80,7 +80,7 @@ build() {
 }
 
 commit() {
-	declare rootfs_files="${*:-versions/**/rootfs.tar.gz}"
+	declare rootfs_files="${*:-versions-$ARCH/**/rootfs.tar.gz}"
 	local build_num="${CIRCLE_BUILD_NUM:-nobuild}"
 	local current_branch
 	current_branch=$(git rev-parse --abbrev-ref HEAD)
