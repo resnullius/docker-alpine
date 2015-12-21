@@ -143,9 +143,10 @@ main() {
 		test)	        shift; run_tests "$@";;
 		commit)	      shift; commit "$@";;
 		push)	        shift; push "$@";;
+    build)        shift; build "$@";;
 		-h|--help)    shift; help "$@";;
     --version)    shift; version;;
-    *)            build "$@";;
+    *)            help "$@";;
 	esac
 }
 
