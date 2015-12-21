@@ -2,36 +2,37 @@
 # vim: ft=sh
 
 declare help="
-Build Script for Alpine's docker images.
+Orchestrator Script for Alpine's docker images.
 
 Usage:
-  build test
-  build commit
-  build push
-  build [path/to/options] [path/to/other/options]
-  build --version
-  build -h | --help
+  orchestrator test
+  orchestrator commit
+  orchestrator push
+  orchestrator build
+  orchestrator [path/to/options] [path/to/other/options]
+  orchestrator --version
+  orchestrator -h | --help
 
 Options:
   -h --help               Show this screen.
   --version               Show versions.
 
 Example of build:
-  build versions/myprefix-*/options
+  orchestrator build versions/myprefix-*/options
 
 Examples of tests:
-  build version/myprefix-*/options
+  orchestrator test version/myprefix-*/options
 
 How should the tests be named:
 Use the tag of the resulting docker image, so if the tag is foo/bar:1.0 the
 test file should be called test_foo_bar-1.0.bats inside the test directory.
 
-By default it will build all the available files on the versions-arch
+By default it will build all the available files on the versions/arch
 directory.
 "
 
 declare version="
-Version: 0.1.0.
+Version: 1.0.0.
 Licensed under the BSD terms.
 "
 
