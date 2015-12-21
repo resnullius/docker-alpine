@@ -1,14 +1,55 @@
 #!/usr/bin/env bash
+# vim: ft=sh
 
-declare BUILD_IMAGE="${BUILD_IMAGE:-alpine-builder}"
-declare BUILD_PREFIX="${BUILD_PREFIX:-alpine-build-}"
-declare OPTIONS="${OPTIONS:-versions/**/options}"
+declare help="
+Orchestrator Script for Alpine's docker images.
+
+Usage:
+  orchestrator test
+  orchestrator commit
+  orchestrator push
+  orchestrator build
+  orchestrator [path/to/options] [path/to/other/options]
+  orchestrator --version
+  orchestrator -h | --help
+
+Options:
+  -h --help               Show this screen.
+  --version               Show versions.
+
+Example of build:
+  orchestrator build versions/myprefix-*/options
+
+Examples of tests:
+  orchestrator test version/myprefix-*/options
+
+How should the tests be named:
+Use the tag of the resulting docker image, so if the tag is foo/bar:1.0 the
+test file should be called test_foo_bar-1.0.bats inside the test directory.
+
+By default it will build all the available files on the versions/arch
+directory.
+"
+
+declare version="
+Version: 1.0.0.
+Licensed under the BSD terms.
+"
+
+declare ARCH="$(uname -m)"
+declare BUILDER_DIR="${BUILDER_DIR:-builder-$ARCH}"
+declare BUILD_IMAGE="${BUILD_IMAGE:-alpine-builder-$ARCH}"
+declare BUILD_PREFIX="${BUILD_PREFIX:-alpine-build-$ARCH-}"
+declare OPTIONS="${OPTIONS:-versions/$ARCH/**/options}"
 
 build() {
+  echo "Building for architecture: $ARCH"
 	declare build_files="${*:-$OPTIONS}"
 	: "${build_files:?}"
+  
+  echo "Will build versions files: $build_files"
 
-	docker build -t "$BUILD_IMAGE" builder
+	docker build -t "$BUILD_IMAGE" "$BUILDER_DIR"
 
 	for file in $build_files; do
 		( source "$file"
@@ -40,7 +81,7 @@ build() {
 }
 
 commit() {
-	declare rootfs_files="${*:-versions/**/rootfs.tar.gz}"
+	declare rootfs_files="${*:-versions/$ARCH/**/rootfs.tar.gz}"
 	local build_num="${CIRCLE_BUILD_NUM:-nobuild}"
 	local current_branch
 	current_branch=$(git rev-parse --abbrev-ref HEAD)
@@ -87,15 +128,24 @@ push() {
 	done
 }
 
+version() {
+  echo "$version"
+}
+
+help() {
+  echo "$help"
+}
+
 main() {
 	set -eo pipefail; [[ "$TRACE" ]] && set -x
 	declare cmd="$1"
 	case "$cmd" in
-		test)	shift;	run_tests "$@";;
-		commit)	shift;	commit "$@";;
-		push)	shift;	push "$@";;
-		library) shift; library;;
-		*)		build "$@";;
+		test)	        shift; run_tests "$@";;
+		commit)	      shift; commit "$@";;
+		push)	        shift; push "$@";;
+		-h|--help)    shift; help "$@";;
+    --version)    shift; version;;
+    *)            build "$@";;
 	esac
 }
 

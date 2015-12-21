@@ -6,7 +6,7 @@ This builder image constructs a Alpine Linux `rootfs.tar.gz` for us to use when 
 
 The builder takes several options:
 
-* `-r <release>`: The release tag to use (such as `edge` or `v3.1`).
+* `-r <release>`: The release tag to use (such as `edge` or `v3.2`).
 * `-m <mirror>`: The mirror URL base. Defaults to `http://nl.alpinelinux.org/alpine`.
 * `-s`: Outputs the `rootfs.tar.gz` to stdout.
 * `-c`: Adds the `apk-install` script to the resulting rootfs.
