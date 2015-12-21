@@ -1,5 +1,5 @@
 export RELEASE="v3.2"
 export MIRROR="http://nl.alpinelinux.org/alpine"
 export BUILD_OPTIONS="-s -E -c -t UTC -r $RELEASE -m $MIRROR"
-export TAGS="resnullius/alpine-armv7l:3.2 resnullius/alpine-armv7l:latest"
+export TAGS="resnullius/alpine-armv7l:3.2"
 export PUSH_IMAGE="true"
