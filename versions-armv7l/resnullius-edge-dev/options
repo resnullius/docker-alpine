@@ -1,6 +1,0 @@
-export RELEASE="edge"
-export MIRROR="http://nl.alpinelinux.org/alpine"
-export PACKAGES="alpine-base alpine-sdk"
-export BUILD_OPTIONS="-s -c -t UTC -r $RELEASE -m $MIRROR -p $PACKAGES"
-export TAGS="resnullius/alpine-armv7l:edge-dev"
-export PUSH_IMAGE="true"
