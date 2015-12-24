@@ -5,7 +5,13 @@ setup() {
 @test "version is correct" {
   run docker run resnullius/alpine:edge cat /etc/os-release
   [ $status -eq 0 ]
-  [ "${lines[2]}" = "VERSION_ID=3.3.0_rc1" ]
+  [ "${lines[2]}" = "VERSION_ID=3.3.0" ]
+}
+
+@test "arch is correct" {
+  run docker run resnullius/alpine:edge cat /etc/apk/arch
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "x86_64" ]
 }
 
 @test "package installs cleanly" {
