@@ -77,7 +77,7 @@ run_tests() {
 		# shellcheck source=versions/x86_64/resnullius-edge/options
 		source "$file"
 		local tag
-		tag="$(echo "$TAGS" | cut -d' ' -f1)"
+    tag="${TAGS[0]}"
 		tag="${tag//:/-}"
 		tag="${tag//\//_}"
 		test_files+=("test/test_${tag}.bats")
