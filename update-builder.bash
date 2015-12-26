@@ -10,7 +10,7 @@ Usage:
 "
 
 declare version="
-Version: 1.0.0.
+Version: 1.0.1.
 Licensed under the BSD terms.
 "
 
@@ -20,7 +20,7 @@ declare BUILDER_CHILDS="${BUILDER_CHILDS:-builder/armv7l builder/x86_64}"
 run_updater() {
   for builder in $BUILDER_CHILDS; do
     echo "Copying scripts from $BUILDER_BASE to $builder"
-    cp -r $BUILDER_BASE/scripts $builder/
+    cp -R "$BUILDER_BASE/scripts" "$builder/"
   done
 }
 
