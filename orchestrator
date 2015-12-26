@@ -6,7 +6,6 @@ Orchestrator Script for Alpine's docker images.
 
 Usage:
   orchestrator test
-  orchestrator commit
   orchestrator push
   orchestrator build
   orchestrator [path/to/options] [path/to/other/options]
@@ -71,27 +70,6 @@ build() {
 	done
 }
 
-commit() {
-	declare rootfs_files="${*:-versions/$ARCH/**/rootfs.tar.gz}"
-	local build_num="${CIRCLE_BUILD_NUM:-nobuild}"
-	local current_branch
-	current_branch=$(git rev-parse --abbrev-ref HEAD)
-
-	for file in $rootfs_files; do
-		local release version_dir
-		release="$(basename "$(dirname "$file")")"
-		version_dir="$(dirname "$file")"
-
-		: "${release:?}" "${current_branch:?}"
-
-		git checkout -B "rootfs-$release"
-		git add -f -- "$file"
-		git commit -m "pushing release $release for build $build_num"
-		git push -f origin "rootfs-$release"
-		git checkout "$current_branch"
-	done
-}
-
 run_tests() {
 	declare build_files="${*:-$OPTIONS}"
 	declare -a test_files
@@ -136,7 +114,6 @@ main() {
 	declare cmd="$1"
 	case "$cmd" in
 		test)	        shift; run_tests "$@";;
-		commit)	      shift; commit "$@";;
 		push)	        shift; push "$@";;
     build)        shift; build "$@";;
 		-h|--help)    shift; help "$@";;
