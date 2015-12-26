@@ -19,7 +19,7 @@ usage() {
 }
 
 build() {
-	declare mirror="$1" rel="$2" packages="${3:-alpine-base}"
+  declare mirror="$1" rel="$2" packages=("${3:-alpine-base}")
 
 	local rootfs
 	rootfs="$(mktemp -d "${TMPDIR:-/var/tmp}/alpine-docker-rootfs-XXXXXXXXXX")"
@@ -37,10 +37,12 @@ build() {
 
 	# mkbase
 	{
+    # shellcheck disable=SC2086
 		apk --root "$rootfs" --update-cache --keys-dir /etc/apk/keys \
-			add --initdb "${packages//,/ }"
+      add --initdb ${packages[*]//,/ }
 		[[ "$ADD_BASELAYOUT" ]] && \
-			apk --root "$rootfs" --keys-dir /etc/apk/keys fetch --stdout alpine-base | tar -xvz -C "$rootfs" etc
+			apk --root "$rootfs" --keys-dir /etc/apk/keys \
+        fetch --stdout alpine-base | tar -xvz -C "$rootfs" etc
 		rm -f "$rootfs/var/cache/apk"/*
 		[[ "$TIMEZONE" ]] && \
 			cp "/usr/share/zoneinfo/$TIMEZONE" "$rootfs/etc/localtime"
@@ -56,7 +58,7 @@ build() {
 }
 
 main() {
-	while getopts "hr:m:t:sEecp:b" opt; do
+	while getopts "hr:m:t:sEecdp:b" opt; do
 		case $opt in
 			r) REL="$OPTARG";;
 			m) MIRROR="${OPTARG%/}";;
