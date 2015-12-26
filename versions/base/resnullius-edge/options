@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+export RELEASE="edge"
+export MIRROR="http://nl.alpinelinux.org/alpine"
+export BUILD_OPTIONS=(-s -c -t UTC -r $RELEASE -m $MIRROR)
+export TAGS=(resnullius/alpine:edge)
+export PUSH_IMAGE="true"

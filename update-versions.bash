@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# vim: ft=sh
 
 declare help="
 Update script for Alpine's docker versions.
@@ -18,16 +19,22 @@ Version: 1.0.0.
 Licensed under the BSD terms.
 "
 
-declare ARCH="$(uname -m)"
-declare VERSIONS_BASE="${VERSIONS_BASE:-versions-base}"
-declare VERSIONS_CHILDS="${VERSIONS_CHILDS:-versions-armv7l versions-x86_64}"
+declare VERSIONS_BASE="${VERSIONS_BASE:-versions/base}"
+declare VERSIONS_CHILDS="${VERSIONS_CHILDS:-versions/armv7l versions/x86_64}"
+
+create_tag() {
+  local OPTIONS="${OPTIONS:-$1/**/options}"
+  for file in $OPTIONS; do
+    echo "$file should be updated"
+    sed -i '' -e 's/alpine:/alpine-armv7l:/g' "$file"
+  done
+}
 
 run_updater() {
   for ver in $VERSIONS_CHILDS; do
-    echo "Copying scripts from $BUILDER_BASE to $builder"
-    cp -r $VERSIONS_BASE/* $ver
-    create_tag "$ver"
-    [[ "$ARCH" -eq "x86_64" ]]
+    echo "Copying scripts from $VERSIONS_BASE to $ver"
+    cp -R "$VERSIONS_BASE/" "$ver"
+    [[ "$ver" = "versions/armv7l" ]] && create_tag "$ver"
   done
 }
 
