@@ -1,3 +1,4 @@
+#!/bin/sh
 export RELEASE="edge"
 export MIRROR="http://nl.alpinelinux.org/alpine"
 export BUILD_OPTIONS="-s -c -t UTC -r $RELEASE -m $MIRROR"
