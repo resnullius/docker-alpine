@@ -12,6 +12,8 @@
 [![Image Size](https://img.shields.io/imagelayers/image-size/resnullius/alpine-armv7l/latest.svg)](https://imagelayers.io/?images=resnullius/alpine-armv7l:latest)
 [![Image Layers](https://img.shields.io/imagelayers/layers/resnullius/alpine-armv7l/latest.svg)](https://imagelayers.io/?images=resnullius/alpine-armv7l:latest)
 
+[![Alpine Linux logo](logo.png)][alpine]
+
     docker pull resnullius/alpine:latest
     docker pull resnullius/alpine-armv7l:latest
 
