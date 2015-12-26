@@ -46,39 +46,28 @@ declare OPTIONS="${OPTIONS:-versions/$ARCH/**/options}"
 build() {
   echo "Building for architecture: $ARCH"
 	declare build_files="${*:-$OPTIONS}"
-	: "${build_files:?}"
   
   echo "Will build versions files: $build_files"
 
+  echo "Building the builder image:"
 	docker build -t "$BUILD_IMAGE" "$BUILDER_DIR"
 
+  echo "Now, gonna build the resulting images:"
 	for file in $build_files; do
+    echo "Building from file: $file..."
 		( # shellcheck source=versions/x86_64/resnullius-edge/options
     source "$file"
-		local release="$RELEASE"
-		local build="${BUILD_PREFIX}${release}"
-		local build_options="$BUILD_OPTIONS"
-		local version_dir="$(dirname "$file")"
-		local tags="$TAGS"
+		local version_dir
+    version_dir="$(dirname "$file")"
+		: "${TAGS:?}" "${BUILD_OPTIONS:?}" "${RELEASE:?}"
 
-		: "${build:?}" "${tags:?}" "${build_options:?}" "${release:?}"
-
-		docker rm "$build" 2>/dev/null || true
-
-		docker run --name "${build}" "$BUILD_IMAGE" $build_options \
+    echo "The build options to use are" "${BUILD_OPTIONS[@]}"
+		docker run --rm -e "TRACE=$TRACE" "$BUILD_IMAGE" "${BUILD_OPTIONS[@]}" \
 			> "./$version_dir/rootfs.tar.gz"
 
-		for tag in $tags; do
+		for tag in "${TAGS[@]}"; do
 			docker build -t "$tag" "$version_dir"
-			if [[ "$CIRCLE_BUILD_NUM" ]]; then
-				mkdir -p images \
-				&& docker tag -f "$tag" "${tag}-${CIRCLE_BUILD_NUM}" \
-				&& docker save "${tag}-${CIRCLE_BUILD_NUM}" \
-					| gzip -c > "images/${tag//\//_}-${CIRCLE_BUILD_NUM}.tar.gz" \
-				&& docker rmi "${tag}-${CIRCLE_BUILD_NUM}" || true
-			fi
-		done
-		docker rm "$build" 2>/dev/null || true )
+    done )
 	done
 }
 
@@ -107,6 +96,7 @@ run_tests() {
 	declare build_files="${*:-$OPTIONS}"
 	declare -a test_files
 	for file in $build_files; do
+		# shellcheck source=versions/x86_64/resnullius-edge/options
 		source "$file"
 		local tag
 		tag="$(echo "$TAGS" | cut -d' ' -f1)"
@@ -118,12 +108,15 @@ run_tests() {
 }
 
 push() {
+  [[ "$NO_PUSH" ]] && return 0
+
 	declare build_files="${*:-$OPTIONS}"
 	for file in $build_files; do
-		( source "$file"
+		( # shellcheck source=versions/x86_64/resnullius-edge/options
+		source "$file"
 		for tag in $TAGS; do
-			if docker history $tag &> /dev/null; then
-				[[ $PUSH_IMAGE ]] && docker push $tag
+			if docker history "$tag" &> /dev/null; then
+				[[ "$PUSH_IMAGE" ]] && docker push "$tag"
 			fi
 		done
 		exit 0 )
