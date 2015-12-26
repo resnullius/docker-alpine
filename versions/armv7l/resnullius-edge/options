@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 export RELEASE="edge"
 export MIRROR="http://nl.alpinelinux.org/alpine"
-export BUILD_OPTIONS=(-s -c -t UTC -r $RELEASE -m $MIRROR)
+export PACKAGES="alpine-baselayout,apk-tools,alpine-keys,libc-utils"
+export BUILD_OPTIONS=(-b -s -c -t UTC -r $RELEASE -m $MIRROR -p $PACKAGES)
 export TAGS=(resnullius/alpine-armv7l:edge)
 export PUSH_IMAGE="true"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 export RELEASE="v3.2"
 export MIRROR="http://nl.alpinelinux.org/alpine"
-export BUILD_OPTIONS=(-s -E -c -t UTC -r $RELEASE -m $MIRROR)
+export PACKAGES="alpine-baselayout,apk-tools,alpine-keys,libc-utils"
+export BUILD_OPTIONS=(-b -s -E -c -t UTC -r $RELEASE -m $MIRROR -p $PACKAGES)
 export TAGS=(resnullius/alpine-armv7l:3.2)
 export PUSH_IMAGE="true"
