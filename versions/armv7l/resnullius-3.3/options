@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export RELEASE="v3.3"
 export MIRROR="http://nl.alpinelinux.org/alpine"
-export BUILD_OPTIONS="-s -c -t UTC -r $RELEASE -m $MIRROR"
-export TAGS="resnullius/alpine-armv7l:3.3 resnullius/alpine-armv7l:latest"
+export BUILD_OPTIONS=(-s -c -t UTC -r $RELEASE -m $MIRROR)
+export TAGS=(resnullius/alpine-armv7l:3.3 resnullius/alpine-armv7l:latest)
 export PUSH_IMAGE="true"
