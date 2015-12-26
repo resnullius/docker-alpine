@@ -25,7 +25,7 @@ declare VERSIONS_CHILDS="${VERSIONS_CHILDS:-versions/armv7l versions/x86_64}"
 create_tag() {
   local OPTIONS="${OPTIONS:-$1/**/options}"
   for file in $OPTIONS; do
-    echo "$file should be updated"
+    echo "tags on $file is being updated"
     sed -i '' -e 's/alpine:/alpine-armv7l:/g' "$file"
   done
 }
