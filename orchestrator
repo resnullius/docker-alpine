@@ -53,7 +53,8 @@ build() {
 	docker build -t "$BUILD_IMAGE" "$BUILDER_DIR"
 
 	for file in $build_files; do
-		( source "$file"
+		( # shellcheck source=versions/x86_64/resnullius-edge/options
+    source "$file"
 		local release="$RELEASE"
 		local build="${BUILD_PREFIX}${release}"
 		local build_options="$BUILD_OPTIONS"
