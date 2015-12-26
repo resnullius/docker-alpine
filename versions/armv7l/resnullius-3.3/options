@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 export RELEASE="v3.3"
 export MIRROR="http://nl.alpinelinux.org/alpine"
 export BUILD_OPTIONS="-s -c -t UTC -r $RELEASE -m $MIRROR"
