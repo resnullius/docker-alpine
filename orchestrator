@@ -24,7 +24,7 @@ Examples of tests:
 
 How should the tests be named:
 Use the tag of the resulting docker image, so if the tag is foo/bar:1.0 the
-test file should be called test_foo_bar-1.0.bats inside the test directory.
+test file should be called test_foo_bar-1.0.bats inside the tests directory.
 
 By default it will build all the available files on the versions/arch
 directory.
@@ -80,7 +80,7 @@ run_tests() {
     tag="${TAGS[0]}"
 		tag="${tag//:/-}"
 		tag="${tag//\//_}"
-		test_files+=("test/test_${tag}.bats")
+		test_files+=("tests/test_${tag}.bats")
 	done
 	bats "${test_files[@]}"
 }
