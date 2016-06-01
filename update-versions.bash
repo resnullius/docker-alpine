@@ -26,7 +26,7 @@ create_tag() {
   local OPTIONS="${OPTIONS:-$1/**/options}"
   for file in $OPTIONS; do
     echo "tags on $file is being updated"
-    sed -i '' -e 's/alpine:/alpine-armv7l:/g' "$file"
+    sed -i -e 's/alpine:/alpine-armv7l:/g' "$file"
   done
 }
 
