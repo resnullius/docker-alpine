@@ -92,7 +92,7 @@ push() {
 	for file in $build_files; do
 		( # shellcheck source=versions/x86_64/resnullius-edge/options
 		source "$file"
-		for tag in $TAGS; do
+		for tag in ${TAGS[@]}; do
 			if docker history "$tag" &> /dev/null; then
 				[[ "$PUSH_IMAGE" ]] && docker push "$tag"
 			fi

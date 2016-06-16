@@ -26,14 +26,14 @@ create_tag() {
   local OPTIONS="${OPTIONS:-$1/**/options}"
   for file in $OPTIONS; do
     echo "tags on $file is being updated"
-    sed -i '' -e 's/alpine:/alpine-armv7l:/g' "$file"
+    sed -i -e 's/alpine:/alpine-armv7l:/g' "$file"
   done
 }
 
 run_updater() {
   for ver in $VERSIONS_CHILDS; do
     echo "Copying scripts from $VERSIONS_BASE to $ver"
-    cp -R "$VERSIONS_BASE/" "$ver"
+    cp -R "$VERSIONS_BASE"/* "$ver"
     [[ "$ver" = "versions/armv7l" ]] && create_tag "$ver"
   done
 }
