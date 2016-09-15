@@ -48,7 +48,7 @@ build() {
 			cp "/usr/share/zoneinfo/$TIMEZONE" "$rootfs/etc/localtime"
 	} >&2
 
-	[[ "$ADD_APK_SCRIPT" ]] && cp /apk-install "$rootfs/usr/sbin/apk-install"
+	[[ "$ADD_APK_SCRIPT" ]] && cp /bin/apk-install "$rootfs/usr/sbin/apk-install"
 
 	# save
 	tar -z -f rootfs.tar.gz --numeric-owner -C "$rootfs" -c .

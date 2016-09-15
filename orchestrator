@@ -49,6 +49,7 @@ build() {
   echo "Will build versions files: $build_files"
 
   echo "Building the builder image:"
+  echo "$BUILDER_DIR"
 	docker build -t "$BUILD_IMAGE" "$BUILDER_DIR"
 
   echo "Now, gonna build the resulting images:"
