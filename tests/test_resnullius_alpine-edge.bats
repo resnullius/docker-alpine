@@ -2,12 +2,6 @@ setup() {
   docker history resnullius/alpine:edge >/dev/null 2>&1
 }
 
-@test "version is correct" {
-  run docker run --rm resnullius/alpine:edge cat /etc/os-release
-  [ $status -eq 0 ]
-  [ "${lines[2]}" = "VERSION_ID=3.5.0_rc5" ]
-}
-
 @test "arch is correct" {
   run docker run --rm resnullius/alpine:edge cat /etc/apk/arch
   [ $status -eq 0 ]
