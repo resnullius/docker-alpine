@@ -5,7 +5,7 @@ setup() {
 @test "version is correct" {
   run docker run --rm resnullius/alpine:3.5 cat /etc/os-release
   [ $status -eq 0 ]
-  [ "${lines[2]}" = "VERSION_ID=3.5.0" ]
+  [ "${lines[2]}" = "VERSION_ID=3.5.1" ]
 }
 
 @test "package installs cleanly" {
